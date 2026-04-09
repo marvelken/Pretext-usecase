@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { prepareWithSegments, layout } from '@chenglou/pretext';
 
-const FONT = '15px -apple-system, system-ui, sans-serif';
-const LINE_HEIGHT = 22;
+const TITLE_FONT = '600 16px -apple-system, system-ui, sans-serif'; // matches .card-title
+const BODY_FONT = '15px -apple-system, system-ui, sans-serif';       // matches .card-body
+const TITLE_LINE_HEIGHT = Math.round(16 * 1.4); // 22px — matches line-height: 1.4 in CSS
+const BODY_LINE_HEIGHT = 22;                    // matches line-height: 22px in CSS
 const CARD_PADDING = 16;
-const CARD_HEADER_HEIGHT = 40; // Approximate height for author + timestamp
-const CARD_VERTICAL_PADDING = CARD_PADDING * 2;
+const CARD_HEADER_HEIGHT = 20; // single flex row at 14px font (~20px rendered)
+const HEADER_MARGIN = 12;      // margin-bottom on .card-header
+const TITLE_MARGIN = 12;       // margin-bottom on .card-title
+const CARD_HORIZONTAL_PADDING = CARD_PADDING * 2;
 const COLUMN_GAP = 16;
 const OVERSCAN = 500; // Pixels to render above/below viewport
 
@@ -96,20 +100,28 @@ function MasonryDemo({ onBack }) {
     const startTime = performance.now();
 
     const columnWidth = (containerWidth - (columnCount - 1) * COLUMN_GAP) / columnCount;
-    const contentWidth = columnWidth - CARD_VERTICAL_PADDING;
+    const contentWidth = columnWidth - CARD_HORIZONTAL_PADDING;
 
     const columnHeights = new Array(columnCount).fill(0);
     const positions = [];
 
     cards.forEach((card) => {
-      // Compute text height using Pretext
-      const textContent = `${card.title}\n\n${card.body}`;
-      const prepared = prepareWithSegments(textContent, FONT);
-      const { lineCount } = layout(prepared, contentWidth, LINE_HEIGHT);
-      const textHeight = lineCount * LINE_HEIGHT;
+      // Measure title with its actual rendered font (600 16px, line-height 1.4)
+      const titlePrepared = prepareWithSegments(card.title, TITLE_FONT);
+      const { lineCount: titleLines } = layout(titlePrepared, contentWidth, TITLE_LINE_HEIGHT);
 
-      // Total card height = header + text + padding
-      const cardHeight = CARD_HEADER_HEIGHT + textHeight + CARD_VERTICAL_PADDING;
+      // Measure body with its actual rendered font (15px, line-height 22px)
+      const bodyPrepared = prepareWithSegments(card.body, BODY_FONT);
+      const { lineCount: bodyLines } = layout(bodyPrepared, contentWidth, BODY_LINE_HEIGHT);
+
+      // Total card height mirrors the DOM exactly:
+      // padding-top + header + header-margin + title + title-margin + body + padding-bottom
+      const cardHeight =
+        CARD_PADDING +
+        CARD_HEADER_HEIGHT + HEADER_MARGIN +
+        titleLines * TITLE_LINE_HEIGHT + TITLE_MARGIN +
+        bodyLines * BODY_LINE_HEIGHT +
+        CARD_PADDING;
 
       // Find shortest column
       const shortestCol = columnHeights.indexOf(Math.min(...columnHeights));
