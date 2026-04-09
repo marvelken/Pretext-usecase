@@ -3,6 +3,7 @@ import HomePage from './HomePage';
 import ChatDemo from './ChatDemo';
 import MasonryDemo from './MasonryDemo';
 import TweetComposer from './TweetComposer';
+import PinchTypeReader from './PinchTypeReader';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -17,6 +18,10 @@ function App() {
 
   if (currentView === 'tweet') {
     return <TweetComposer onBack={() => setCurrentView('home')} />;
+  }
+
+  if (currentView === 'pinch') {
+    return <PinchTypeReader onBack={() => setCurrentView('home')} />;
   }
 
   return <HomePage onNavigate={setCurrentView} />;

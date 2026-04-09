@@ -4,7 +4,7 @@ function HomePage({ onNavigate }) {
       <header className="home-header">
         <h1>Pretext Demo Collection</h1>
         <p className="subtitle">
-          Two examples showing how @chenglou/pretext eliminates layout jank
+          Four examples showing how @chenglou/pretext eliminates layout jank
         </p>
       </header>
 
@@ -62,6 +62,25 @@ function HomePage({ onNavigate }) {
             <li>Sample tweets included</li>
           </ul>
           <button onClick={() => onNavigate('tweet')} className="demo-button">
+            View Demo →
+          </button>
+        </div>
+
+        <div className="demo-card">
+          <div className="demo-number">04</div>
+          <h2>Pinch-Type Reader</h2>
+          <p>
+            Canvas text rendered at a different font size per line — something CSS cannot do.
+            The line at your visual focus point renders larger; surrounding lines shrink and fade.
+            Pretext handles all the line-breaking math so the fisheye runs at 60fps.
+          </p>
+          <ul className="demo-features">
+            <li>Per-line font scaling on canvas</li>
+            <li>Momentum scroll (friction 0.93)</li>
+            <li>Click+drag flick scrolling</li>
+            <li>Cmd+scroll to zoom base size</li>
+          </ul>
+          <button onClick={() => onNavigate('pinch')} className="demo-button">
             View Demo →
           </button>
         </div>
